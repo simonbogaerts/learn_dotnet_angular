@@ -28,7 +28,9 @@ namespace Bogsi.DatingApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            
+
+            services.AddCors();
+
             services.AddControllers();
         }
 
@@ -44,11 +46,17 @@ namespace Bogsi.DatingApp.API
 
             app.UseRouting();
 
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                //endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
