@@ -13,10 +13,12 @@ import { ErrorInterceptorProvider } from './services/error.interceptor';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { MemberListComponent } from './components/member-list/member-list.component';
+import { MemberListComponent } from './components/members/member-list/member-list.component';
 import { ListsComponent } from './components/lists/lists.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { AppRoutes } from './routes';
+import { UserService } from './services/user.service';
+import { MemberCardComponent } from './components/members/member-card/member-card.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { AppRoutes } from './routes';
     RegisterComponent,
     MemberListComponent,
     ListsComponent,
-    MessagesComponent
+    MessagesComponent,
+    MemberCardComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +39,7 @@ import { AppRoutes } from './routes';
     BsDropdownModule.forRoot(),
     RouterModule.forRoot(AppRoutes)
   ],
-  providers: [AuthService, ErrorInterceptorProvider],
+  providers: [AuthService, ErrorInterceptorProvider, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
