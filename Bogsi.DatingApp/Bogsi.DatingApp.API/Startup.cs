@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Bogsi.DatingApp.API.Data;
 using Bogsi.DatingApp.API.Data.Repositories;
 using Bogsi.DatingApp.API.Helpers;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Bogsi.DatingApp.API
 {
@@ -39,6 +41,8 @@ namespace Bogsi.DatingApp.API
 
             services.AddCors();
 
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
+
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -55,7 +59,10 @@ namespace Bogsi.DatingApp.API
 
             services
                 .AddControllers()
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    });
 
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IDatingRepository, DatingRepository>();
