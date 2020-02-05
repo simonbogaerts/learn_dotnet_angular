@@ -47,5 +47,14 @@ namespace Bogsi.DatingApp.API.Data.Repositories
 
             return user;
         }
+
+        public async Task<Photo> GetPhoto(int id)
+        {
+            var photo = await this._context
+                .Photos
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return photo;
+        }
     }
 }

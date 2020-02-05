@@ -9,6 +9,7 @@ namespace Bogsi.DatingApp.API.Helpers
     {
         public AutoMapperProfiles()
         {
+            // User
             CreateMap<User, UserForListDto>()
                 .ForMember(
                     dest => dest.PhotoUrl, 
@@ -23,9 +24,14 @@ namespace Bogsi.DatingApp.API.Helpers
                 .ForMember(dest => dest.Age,
                     options => options.MapFrom(src => src.DateOfBirth.CalculateAge()));
 
+            CreateMap<UserForUpdateDto, User>();
+
+            // Photo 
+            CreateMap<PhotoForCreationDto, Photo>();
+
             CreateMap<Photo, PhotoForDetailDto>();
 
-            CreateMap<UserForUpdateDto, User>();
+            CreateMap<Photo, PhotoForReturnDto>();
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Bogsi.DatingApp.API.Models
+namespace Bogsi.DatingApp.API.Dtos
 {
-    public class Photo
+    public class PhotoForReturnDto
     {
         public int Id { get; set; }
 
@@ -13,9 +13,5 @@ namespace Bogsi.DatingApp.API.Models
         public bool IsMain { get; set; }
 
         public DateTime DateAdded { get; set; }
-
-        // Navigation
-        public User User { get; set; }
-        public int UserId { get; set; }
     }
 }
