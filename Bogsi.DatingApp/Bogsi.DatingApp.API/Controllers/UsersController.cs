@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bogsi.DatingApp.API.Data.Repositories;
@@ -46,6 +47,28 @@ namespace Bogsi.DatingApp.API.Controllers
             var userToReturn = this._mapper.Map<UserForDetailDto>(user);
 
             return Ok(userToReturn);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdate)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await this._datingRepository.GetUser(id);
+
+            _mapper.Map(userForUpdate, userFromRepo);
+
+            if (await this._datingRepository.SaveAll())
+            {
+                return NoContent();
+            }
+            else
+            {
+                throw new Exception($"Updating user : [{id}] failed on save.");
+            }
         }
     }
 }

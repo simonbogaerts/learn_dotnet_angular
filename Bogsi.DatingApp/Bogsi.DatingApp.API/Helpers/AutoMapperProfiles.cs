@@ -24,6 +24,8 @@ namespace Bogsi.DatingApp.API.Helpers
                     options => options.MapFrom(src => src.DateOfBirth.CalculateAge()));
 
             CreateMap<Photo, PhotoForDetailDto>();
+
+            CreateMap<UserForUpdateDto, User>();
         }
     }
 }
