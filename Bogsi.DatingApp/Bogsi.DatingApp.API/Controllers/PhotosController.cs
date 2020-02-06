@@ -107,5 +107,91 @@ namespace Bogsi.DatingApp.API.Controllers
                 return BadRequest("Could not add photo.");
             }
         }
+
+        [HttpPost("{id:int}/set-main")]
+        public async Task<IActionResult> SetMain([FromRoute] int userId, [FromRoute] int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await this._datingRepository.GetUser(userId);
+
+            if (userFromRepo.Photos.All(x => x.Id != id))
+            {
+                return Unauthorized();
+            }
+
+            var photoFromRepo = await this._datingRepository.GetPhoto(id);
+
+            if (photoFromRepo.IsMain)
+            {
+                return BadRequest("Selected photo is already the main photo");
+            }
+
+            var currentMainPhoto = await this._datingRepository.GetMainPhoto(userId);
+
+            currentMainPhoto.IsMain = false;
+            photoFromRepo.IsMain = true;
+
+            if (await this._datingRepository.SaveAll())
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Could not set photo to main");
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeletePhoto([FromRoute] int userId, [FromRoute] int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var userFromRepo = await this._datingRepository.GetUser(userId);
+
+            if (userFromRepo.Photos.All(x => x.Id != id))
+            {
+                return Unauthorized();
+            }
+
+            var photoFromRepo = await this._datingRepository.GetPhoto(id);
+
+            if (photoFromRepo.IsMain)
+            {
+                return BadRequest("Can not delete main photo!");
+            }
+
+            // Cloundinary images have public id's, stock default do not
+            if (photoFromRepo.PublicId != null) 
+            {
+                var deleteParams = new DeletionParams(photoFromRepo.PublicId);
+
+                var result = await this._cloudinary.DestroyAsync(deleteParams);
+
+                if (result.Result.Equals("ok"))
+                {
+                    this._datingRepository.Delete(photoFromRepo);
+                }
+            }
+            else
+            {
+                this._datingRepository.Delete(photoFromRepo);
+            }
+
+            if (await this._datingRepository.SaveAll())
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Failed to delete the photo");
+            }
+        }
     }
 }

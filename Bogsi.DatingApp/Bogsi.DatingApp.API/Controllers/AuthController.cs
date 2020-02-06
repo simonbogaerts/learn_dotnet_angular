@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Bogsi.DatingApp.API.Data.Repositories;
 using Bogsi.DatingApp.API.Dtos;
 using Bogsi.DatingApp.API.Models;
@@ -22,9 +23,11 @@ namespace Bogsi.DatingApp.API.Controllers
     {
         private readonly IAuthRepository _repository;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repository, IConfiguration configuration)
+        public AuthController(IAuthRepository repository, IConfiguration configuration, IMapper mapper)
         {
+            _mapper = mapper;
             _configuration = configuration;
             _repository = repository;
         }
@@ -83,9 +86,12 @@ namespace Bogsi.DatingApp.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var user = this._mapper.Map<UserForListDto>(userFromRepo);
+
             return Ok(new
             {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                user = user
             });
         }
     }
