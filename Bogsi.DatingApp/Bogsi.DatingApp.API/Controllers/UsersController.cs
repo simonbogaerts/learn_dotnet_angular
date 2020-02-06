@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Bogsi.DatingApp.API.Data.Repositories;
 using Bogsi.DatingApp.API.Dtos;
+using Bogsi.DatingApp.API.Helpers;
 using Bogsi.DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ namespace Bogsi.DatingApp.API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(LogUserActivity))]
     public class UsersController : ControllerBase
     {
         private readonly IDatingRepository _datingRepository;
