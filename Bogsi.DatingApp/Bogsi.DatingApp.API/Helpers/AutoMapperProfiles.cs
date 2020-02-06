@@ -26,6 +26,8 @@ namespace Bogsi.DatingApp.API.Helpers
 
             CreateMap<UserForUpdateDto, User>();
 
+            CreateMap<UserForRegisterDto, User>();
+
             // Photo 
             CreateMap<PhotoForCreationDto, Photo>();
 

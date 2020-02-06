@@ -35,8 +35,6 @@ namespace Bogsi.DatingApp.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserForRegisterDto userDto)
         {
-            // validate request
-
             userDto.Username = userDto.Username.ToLower();
 
             if (await this._repository.UserExists(userDto.Username))
@@ -44,14 +42,16 @@ namespace Bogsi.DatingApp.API.Controllers
                 return BadRequest("Username already exists.");
             }
 
-            var userToCreate = new User
-            {
-                Username = userDto.Username
-            };
+            var userToCreate = this._mapper.Map<User>(userDto);
 
             var createdUser = await this._repository.Register(userToCreate, userDto.Password);
 
-            return StatusCode(201, createdUser);
+            var userToReturn = this._mapper.Map<UserForDetailDto>(createdUser);
+
+            return CreatedAtRoute(
+                "GetUser", 
+                new {Controller = "Users", Id = createdUser.Id},
+                userToReturn);
         }
 
         [HttpPost("login")]

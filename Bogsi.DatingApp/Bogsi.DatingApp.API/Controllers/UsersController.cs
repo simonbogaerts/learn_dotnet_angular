@@ -39,7 +39,7 @@ namespace Bogsi.DatingApp.API.Controllers
             return Ok(usersToReturn);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await this._datingRepository.GetUser(id);
