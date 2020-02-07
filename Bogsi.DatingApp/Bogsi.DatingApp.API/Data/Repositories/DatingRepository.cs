@@ -51,6 +51,7 @@ namespace Bogsi.DatingApp.API.Data.Repositories
                 users = users.Where(x => userLikers.Contains(x.Id));
             }
 
+
             if (parameters.Likees)
             {
                 var userLikees = await GetUserLikes(parameters.UserId, parameters.Likers);
@@ -129,6 +130,21 @@ namespace Bogsi.DatingApp.API.Data.Repositories
             return likers 
                 ? user.Likers.Where(x => x.LikeeId == id).Select(x => x.LikerId) 
                 : user.Likees.Where(x => x.LikerId == id).Select(x => x.LikeeId);
+        }
+
+        public async Task<Message> GetMessage(int id)
+        {
+            return await this._context.Messages.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<PagedList<Message>> GetMessagesForUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

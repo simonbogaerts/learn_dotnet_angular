@@ -20,5 +20,9 @@ namespace Bogsi.DatingApp.API.Data.Repositories
         // Likes
         Task<Like> GetLike(int userId, int recipientId);
 
+        // Message
+        Task<Message> GetMessage(int id);
+        Task<PagedList<Message>> GetMessagesForUser();
+        Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId);
     }
 }
