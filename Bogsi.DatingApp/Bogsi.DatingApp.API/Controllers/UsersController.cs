@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -86,6 +87,44 @@ namespace Bogsi.DatingApp.API.Controllers
             else
             {
                 throw new Exception($"Updating user : [{id}] failed on save.");
+            }
+        }
+
+        [HttpPost("{id:int}/like/{recipientId:int}")]
+        public async Task<IActionResult> LikeUser(int id, int recipientId)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            if (await this._datingRepository.GetUser(recipientId) == null)
+            {
+                return NotFound();
+            }
+
+            var like = await this._datingRepository.GetLike(id, recipientId);
+
+            if (like != null)
+            {
+                return BadRequest("You already liked this user!");
+            }
+
+            like = new Like
+            {
+                LikerId = id,
+                LikeeId = recipientId
+            };
+
+            _datingRepository.Add(like);
+
+            if (await this._datingRepository.SaveAll())
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Failed to like user!");
             }
         }
     }

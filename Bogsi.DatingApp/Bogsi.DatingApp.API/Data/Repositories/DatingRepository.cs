@@ -44,6 +44,19 @@ namespace Bogsi.DatingApp.API.Data.Repositories
             // Filter on gender
             users = users.Where(x => x.Gender == parameters.Gender);
 
+            // Likes
+            if (parameters.Likers)
+            {
+                var userLikers = await GetUserLikes(parameters.UserId, parameters.Likers);
+                users = users.Where(x => userLikers.Contains(x.Id));
+            }
+
+            if (parameters.Likees)
+            {
+                var userLikees = await GetUserLikes(parameters.UserId, parameters.Likers);
+                users = users.Where(x => userLikees.Contains(x.Id));
+            }
+
             // filter on age 
             if (parameters.MinAge != 18 || parameters.MaxAge != 99)
             {
@@ -96,6 +109,26 @@ namespace Bogsi.DatingApp.API.Data.Repositories
                 .FirstOrDefaultAsync(x => x.IsMain && x.UserId == userId);
 
             return photo;
+        }
+
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _context
+                .Likes
+                .FirstOrDefaultAsync(x => x.LikerId == userId && x.LikeeId == recipientId);
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikes(int id, bool likers)
+        {
+            var user = await this._context
+                .Users
+                .Include(x => x.Likers)
+                .Include(x => x.Likees)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return likers 
+                ? user.Likers.Where(x => x.LikeeId == id).Select(x => x.LikerId) 
+                : user.Likees.Where(x => x.LikerId == id).Select(x => x.LikeeId);
         }
     }
 }

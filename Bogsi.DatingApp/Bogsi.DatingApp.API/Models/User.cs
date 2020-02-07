@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+// ReSharper disable IdentifierTypo
 
 namespace Bogsi.DatingApp.API.Models
 {
@@ -22,6 +23,8 @@ namespace Bogsi.DatingApp.API.Models
         public DateTime LastActive { get; set; }
 
         public ICollection<Photo> Photos { get; set; }
+        public ICollection<Like> Likers { get; set; }
+        public ICollection<Like> Likees { get; set; }
 
         public byte[] Hash { get; set; }
         public byte[] PasswordSalt { get; set; }

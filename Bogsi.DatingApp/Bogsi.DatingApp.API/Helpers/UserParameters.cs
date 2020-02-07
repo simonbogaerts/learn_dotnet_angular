@@ -1,4 +1,5 @@
-﻿namespace Bogsi.DatingApp.API.Helpers
+﻿// ReSharper disable IdentifierTypo
+namespace Bogsi.DatingApp.API.Helpers
 {
     public class UserParameters
     {
@@ -21,5 +22,10 @@
         public int MaxAge { get; set; } = 99;
 
         public string OrderBy { get; set; }
+
+        // Like
+
+        public bool Likees { get; set; } = false;
+        public bool Likers { get; set; } = false;
     }
 }
