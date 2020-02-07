@@ -32,11 +32,27 @@ namespace Bogsi.DatingApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery] UserParameters parameters)
         {
-            var users = await this._datingRepository.GetUsers();
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var currentUser = await this._datingRepository.GetUser(currentUserId);
+
+            parameters.UserId = currentUserId;
+
+            if (string.IsNullOrWhiteSpace(parameters.Gender))
+            {
+                parameters.Gender = (currentUser.Gender == "male") ? "female" : "male";
+            }
+
+            var users = await this._datingRepository.GetUsers(parameters);
 
             var usersToReturn = this._mapper.Map<IEnumerable<UserForListDto>>(users);
+
+            Response.AddPagination(
+                users.CurrentPage, 
+                users.PageSize,
+                users.TotalCount, 
+                users.TotalPages);
 
             return Ok(usersToReturn);
         }
